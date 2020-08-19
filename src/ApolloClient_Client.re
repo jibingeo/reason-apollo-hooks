@@ -3,6 +3,7 @@ module Types = ApolloClient_Types;
 type queryObj('raw_t_variables) = {
   query: Types.queryString,
   variables: 'raw_t_variables,
+  errorPolicy: Types.errorPolicy,
 };
 
 type opaqueQueryObj;
@@ -131,11 +132,17 @@ module ReadQuery = (Operation: Types.Operation) => {
   let make = (~client, ~variables: option(Operation.t_variables)=?, ()) =>
     readQuery(
       client,
-      {query: graphqlQueryAST, variables:
-        Js.Nullable.fromOption(switch(variables) { 
-          | Some(variables) => Some(Operation.serializeVariables(variables))
-          | None => None
-          })},
+      {
+        query: graphqlQueryAST,
+        variables:
+          Js.Nullable.fromOption(
+            switch (variables) {
+            | Some(variables) =>
+              Some(Operation.serializeVariables(variables))
+            | None => None
+            },
+          ),
+      },
     )
     ->apolloDataToRecord;
 };
@@ -164,10 +171,13 @@ module WriteQuery = (Operation: Types.Operation) => {
       {
         query: graphqlQueryAST,
         variables:
-          Js.Nullable.fromOption(switch(variables) {
-            | Some(variables) => Some(Operation.serializeVariables(variables))
+          Js.Nullable.fromOption(
+            switch (variables) {
+            | Some(variables) =>
+              Some(Operation.serializeVariables(variables))
             | None => None
-          }),
+            },
+          ),
         data,
       },
     );

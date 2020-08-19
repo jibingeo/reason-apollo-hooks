@@ -168,14 +168,17 @@ let useSubscription = Subscription.useSubscription;
 
 /** Helper to generate the shape of a query for [refetchQueries] mutation param. Take a look in examples/persons/src/EditPerson.re for a more complete demo of usage. */
 let toQueryObj:
-  (string, 'raw_t_variables) => Client.queryObj('raw_t_variables) =
-  (theQuery, variables) =>
-    Client.{query: Client.gql(. theQuery), variables};
+  (~errorPolicy: ApolloClient_Types.errorPolicy=?, string, 'raw_t_variables) =>
+  Client.queryObj('raw_t_variables) =
+  (~errorPolicy=All, theQuery, variables) =>
+    Client.{query: Client.gql(. theQuery), variables, errorPolicy};
 
-let toOpaqueQueryObj: (string, 'raw_t_variables) => Client.opaqueQueryObj =
-  (theQuery, variables) =>
+let toOpaqueQueryObj:
+  (~errorPolicy: ApolloClient_Types.errorPolicy=?, string, 'raw_t_variables) =>
+  Client.opaqueQueryObj =
+  (~errorPolicy=All, theQuery, variables) =>
     Client.toOpaqueQueryObj(
-      Client.{query: Client.gql(. theQuery), variables},
+      Client.{query: Client.gql(. theQuery), variables, errorPolicy},
     );
 
 [@bs.module "@apollo/client"]

@@ -24,6 +24,12 @@ external apolloInMemoryCache: 'a => Types.apolloCache = "InMemoryCache";
 [@bs.send.pipe: 't]
 external restore: inMemoryCacheRestoreData => Types.apolloCache = "restore";
 
+/* Bind the extract method */
+[@bs.send.pipe: 't]
+external extractJs: bool => inMemoryCacheRestoreData = "extract";
+
+let extract = (~optimistic=false, unit) => extractJs(optimistic);
+
 type pagination;
 
 [@bs.module "@apollo/client/utilities"]
